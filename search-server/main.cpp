@@ -66,7 +66,6 @@ public:
         const double TF = 1.0 / words.size();
         
         for (const string& word : words) {
-            //doc_index_[word].insert({document_id, TF}); не обрабатывает повт. слова
             doc_index_[word][document_id] += TF;
         }
 
@@ -146,26 +145,6 @@ private:
                 }
             }
         }
-        
-        /*if (query_words.inc_words.empty()) {
-            return matched_documents;
-        }
-        
-        for (const auto& [word, doc_map] : doc_index_) {
-            if (query_words.inc_words.count(word) > 0) {
-                const double IDF = log(static_cast<double>(document_count_) / doc_map.size());
-                for (const auto& [doc_id, TF] : doc_map) {
-                    rel_docs[doc_id] += TF * IDF;
-                }
-            }
-        }
-        for (const auto& [word, doc_map] : doc_index_) {
-            if (query_words.exc_words.count(word) > 0) {
-                for (const auto& [doc_id, _] : doc_map) {
-                    rel_docs.erase(doc_id);
-                }
-            }
-        }*/ //медленная реализация
 
         for (const string& word : query_words.exc_words) {
             if (doc_index_.count(word) > 0) {
