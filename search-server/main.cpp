@@ -117,17 +117,15 @@ private:
 
     Query ParseQuery(const string& text) const {
         Query query_words;
-		
+
         for (const string& word : SplitIntoWordsNoStop(text)) {
-            
-			if (word[0] == '-') {
+            if (word[0] == '-') {
                 query_words.exc_words.insert(word.substr(1));
             } else {
                 query_words.inc_words.insert(word);
             }
-			
         }
-		
+        
         return query_words;
     }
 
