@@ -30,21 +30,17 @@ vector<string> SplitIntoWords(const string& text) {
     vector<string> words;
     string word;
     
-	for (const char c : text) {
-        
-		if (c == ' ') {
-            
-			if (!word.empty()) {
+    for (const char c : text) {
+        if (c == ' ') {
+            if (!word.empty()) {
                 words.push_back(word);
                 word.clear();
             }
-			
         } else {
             word += c;
         }
-		
     }
-	
+
     if (!word.empty()) {
         words.push_back(word);
     }
@@ -60,22 +56,20 @@ struct Document {
 class SearchServer {
 public:
     void SetStopWords(const string& text) {
-        
-		for (const string& word : SplitIntoWords(text)) {
+        for (const string& word : SplitIntoWords(text)) {
             stop_words_.insert(word);
         }
-		
     }
 
     void AddDocument(int document_id, const string& document) {
         const vector<string> words = SplitIntoWordsNoStop(document);
         const double TF = 1.0 / words.size();
         
-		for (const string& word : words) {
+        for (const string& word : words) {
             //doc_index_[word].insert({document_id, TF}); не обрабатывает повт. слова
             doc_index_[word][document_id] += TF;
         }
-		
+
         ++document_count_;
     }
 
@@ -88,10 +82,10 @@ public:
                  return lhs.relevance > rhs.relevance;
              });
         
-		if (matched_documents.size() > MAX_RESULT_DOCUMENT_COUNT) {
+        if (matched_documents.size() > MAX_RESULT_DOCUMENT_COUNT) {
             matched_documents.resize(MAX_RESULT_DOCUMENT_COUNT);
         }
-		
+
         return matched_documents;
     }
 
@@ -112,14 +106,12 @@ private:
     vector<string> SplitIntoWordsNoStop(const string& text) const {
         vector<string> words;
         
-		for (const string& word : SplitIntoWords(text)) {
-            
-			if (!IsStopWord(word)) {
+        for (const string& word : SplitIntoWords(text)) {
+            if (!IsStopWord(word)) {
                 words.push_back(word);
             }
-			
         }
-		
+
         return words;
     }
 
@@ -143,24 +135,21 @@ private:
         vector<Document> matched_documents;
         map<int, double> rel_docs;
         
-		if (query_words.inc_words.empty()) {
+        if (query_words.inc_words.empty()) {
             return matched_documents;
         }
-		
+        
         for (const string& word : query_words.inc_words) {
-            
-			if (doc_index_.count(word) > 0) {
+            if (doc_index_.count(word) > 0) {
                 const double IDF = log(static_cast<double>(document_count_) / doc_index_.at(word).size());
                 
-				for (const auto& [doc_id, TF] : doc_index_.at(word)) {
+                for (const auto& [doc_id, TF] : doc_index_.at(word)) {
                     rel_docs[doc_id] += TF * IDF;
                 }
-				
             }
-			
         }
-		
-		/*if (query_words.inc_words.empty()) {
+        
+        /*if (query_words.inc_words.empty()) {
             return matched_documents;
         }
         
@@ -172,30 +161,26 @@ private:
                 }
             }
         }
-		for (const auto& [word, doc_map] : doc_index_) {
+        for (const auto& [word, doc_map] : doc_index_) {
             if (query_words.exc_words.count(word) > 0) {
                 for (const auto& [doc_id, _] : doc_map) {
                     rel_docs.erase(doc_id);
                 }
             }
         }*/ //медленная реализация
-		
+
         for (const string& word : query_words.exc_words) {
-            
-			if (doc_index_.count(word) > 0) {
-                
-				for (const auto& [doc_id, _] : doc_index_.at(word)) {
+            if (doc_index_.count(word) > 0) {
+                for (const auto& [doc_id, _] : doc_index_.at(word)) {
                     rel_docs.erase(doc_id);
                 }
-				
             }
-			
         }
-		
+
         for (const auto& [doc_id, relevance] : rel_docs) {
             matched_documents.push_back({doc_id, relevance});
         }
-		
+
         return matched_documents;
     }
 };
@@ -206,7 +191,7 @@ SearchServer CreateSearchServer() {
 
     const int document_count = ReadLineWithNumber();
     
-	for (int document_id = 0; document_id < document_count; ++document_id) {
+    for (int document_id = 0; document_id < document_count; ++document_id) {
         search_server.AddDocument(document_id, ReadLine());
     }
 
@@ -218,7 +203,7 @@ int main() {
 
     const string query = ReadLine();
     
-	for (const auto& [document_id, relevance] : search_server.FindTopDocuments(query)) {
+    for (const auto& [document_id, relevance] : search_server.FindTopDocuments(query)) {
         cout << "{ document_id = "s << document_id << ", "
              << "relevance = "s << relevance << " }"s << endl;
     }
