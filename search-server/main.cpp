@@ -63,10 +63,10 @@ public:
 
     void AddDocument(int document_id, const string& document) {
         const vector<string> words = SplitIntoWordsNoStop(document);
-        const double TF = 1.0 / words.size();
+        const double term_freq = 1.0 / words.size();
         
         for (const string& word : words) {
-            doc_index_[word][document_id] += TF;
+            doc_index_[word][document_id] += term_freq;
         }
 
         ++document_count_;
@@ -138,10 +138,10 @@ private:
         
         for (const string& word : query_words.inc_words) {
             if (doc_index_.count(word) > 0) {
-                const double IDF = log(static_cast<double>(document_count_) / doc_index_.at(word).size());
+                const double inv_doc_freq = log(static_cast<double>(document_count_) / doc_index_.at(word).size());
                 
-                for (const auto& [doc_id, TF] : doc_index_.at(word)) {
-                    rel_docs[doc_id] += TF * IDF;
+                for (const auto& [doc_id, term_freq] : doc_index_.at(word)) {
+                    rel_docs[doc_id] += term_freq * inv_doc_freq;
                 }
             }
         }
