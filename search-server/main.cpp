@@ -128,6 +128,10 @@ private:
         return query_words;
     }
 
+    double ComputeInverseDocFreq (const string& word) const {
+        return log(static_cast<double>(document_count_) / doc_index_.at(word).size());
+    }
+
     vector<Document> FindAllDocuments(const Query& query_words) const {
         vector<Document> matched_documents;
         map<int, double> rel_docs;
@@ -138,7 +142,7 @@ private:
         
         for (const string& word : query_words.inc_words) {
             if (doc_index_.count(word) > 0) {
-                const double inv_doc_freq = log(static_cast<double>(document_count_) / doc_index_.at(word).size());
+                const double inv_doc_freq = ComputeInverseDocFreq(word);
                 
                 for (const auto& [doc_id, term_freq] : doc_index_.at(word)) {
                     rel_docs[doc_id] += term_freq * inv_doc_freq;
