@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "xtree": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "utility": "cpp",
+        "xstring": "cpp",
+        "algorithm": "cpp",
+        "map": "cpp"
     }
 }
